@@ -1,0 +1,976 @@
+<!doctype html>
+<html lang="de-CH">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#070b17" />
+    <title>Hugo – Dein persönlicher Assistent</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2040%2040%22%3E%3Crect%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%229%22%20fill%3D%22%23143e38%22%2F%3E%3Cpath%20d%3D%22M12%209v22M28%209v22M12%2020h16%22%20fill%3D%22none%22%20stroke%3D%22%236ce8ed%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" type="module"></script>
+  </head>
+  <body data-hugo-mode="idle">
+    <div class="ambient" aria-hidden="true">
+      <span class="comet comet-one"></span><span class="comet comet-two"></span
+      ><span class="comet comet-three"></span
+      ><span class="ambient-glow glow-one"></span
+      ><span class="ambient-glow glow-two"></span
+      ><span class="ambient-glow glow-three"></span>
+    </div>
+    <svg class="icons" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="i-settings" viewBox="0 0 24 24">
+        <path
+          d="m9.5 3-.7 2.4-2 .9-2.3-.6-2.4 4.1L3.9 12l-1.8 1.2 2.4 4.1 2.3-.6 2 .9.7 2.4h5l.7-2.4 2-.9 2.3.6 2.4-4.1-1.8-1.2 1.8-1.2-2.4-4.1-2.3.6-2-.9-.7-2.4Z"
+        />
+        <circle cx="12" cy="12" r="3" />
+      </symbol>
+      <symbol id="i-drag" viewBox="0 0 24 24">
+        <path
+          d="m12 3-3 3m3-3 3 3M12 3v18m0 0-3-3m3 3 3-3M3 12h18M3 12l3-3m-3 3 3 3m15-3-3-3m3 3-3 3"
+        />
+      </symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24">
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24">
+        <path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9H3Z" />
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M12 19V5m-6 6 6-6 6 6" />
+      </symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24">
+        <rect x="9" y="3" width="6" height="12" rx="3" />
+        <path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3m-4 0h8" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="m5 12 4 4L19 6" />
+      </symbol>
+      <symbol id="i-speaker" viewBox="0 0 24 24">
+        <path d="m11 5-6 4H2v6h3l6 4Zm4 4a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12" />
+      </symbol>
+      <symbol id="i-file" viewBox="0 0 24 24">
+        <path d="M14 3H5v18h14V8Zm0 0v6h5M8 13h8m-8 4h6" />
+      </symbol>
+    </svg>
+    <a href="#prompt" class="skip">Zum Auftrag</a>
+    <div class="app">
+      <div
+        id="sidebar-backdrop"
+        class="sidebar-backdrop"
+        hidden
+        aria-hidden="true"
+      ></div>
+      <aside id="sidebar" class="sidebar" aria-label="Hugo einrichten">
+        <button
+          id="sidebar-close"
+          class="icon-button sidebar-close"
+          type="button"
+          aria-label="Seitenleiste schliessen"
+        >
+          <svg><use href="#i-close" /></svg>
+        </button>
+        <a class="brand" href="/" aria-label="Hugo Startseite"
+          ><span class="brand-mark"
+            ><svg viewBox="0 0 40 40" aria-hidden="true">
+              <path d="M11 7v26M29 7v26M11 20h18" />
+              <circle cx="20" cy="20" r="18" /></svg></span
+          ><span>hugo<span class="brand-period">.</span></span></a
+        >
+        <p class="brand-caption">Mehr Überblick. Mehr Zeit.</p>
+        <section class="connections">
+          <h2>Deine Verbindung</h2>
+          <div class="connection-line">
+            <span id="auth-dot" class="dot warning"></span
+            ><span>Claude-Abo</span
+            ><span id="auth-label" class="connection-value">Prüfen …</span>
+          </div>
+          <button id="login" class="light-button" hidden>
+            Claude anmelden
+          </button>
+          <button id="refresh" class="text-button">Verbindung prüfen</button>
+          <p id="login-help" class="side-note" hidden>
+            Die Anmeldung öffnet sich im Terminal und im Browser. Melde dich mit
+            deinem Claude-Abo an und prüfe danach die Verbindung erneut.
+          </p>
+        </section>
+        <section class="folder-section">
+          <div class="section-title">
+            <h2>Freigegebene Ordner</h2>
+            <span id="folder-count">0</span>
+          </div>
+          <ul id="folders" class="folder-list"></ul>
+          <p id="folder-empty" class="side-note">
+            Deine Dateien bleiben dort, wo sie sind. Du entscheidest, welche
+            Ordner Hugo lesen darf.
+          </p>
+          <button id="pick-folder" class="light-button">
+            <svg><use href="#i-plus" /></svg>Ordner auswählen
+          </button>
+          <details class="path-entry">
+            <summary>Ordnerpfad eingeben</summary>
+            <form id="path-form">
+              <label for="folder-path">Absoluter Pfad im Finder</label
+              ><input
+                id="folder-path"
+                placeholder="/Users/…/Unterricht"
+                autocomplete="off"
+                required
+              /><button class="light-button" type="submit">
+                Ordner verbinden
+              </button>
+            </form>
+          </details>
+        </section>
+        <div class="sidebar-bottom">
+          <span class="dot"></span><span>Lokal auf deinem Mac</span
+          ><span class="read-only">Nur lesen</span>
+        </div>
+      </aside>
+      <main>
+        <header class="topbar">
+          <button
+            id="sidebar-menu"
+            class="icon-button"
+            type="button"
+            aria-label="Seitenleiste anzeigen"
+            aria-expanded="false"
+            aria-controls="sidebar"
+          >
+            <svg><use href="#i-menu" /></svg>
+          </button>
+          <div class="week">
+            <span class="week-label" id="week-number">Diese Woche</span
+            ><span id="week-range"></span>
+          </div>
+          <div class="topbar-actions">
+            <label class="appearance-picker" for="appearance"
+              ><span class="appearance-label">Ansicht</span
+              ><select id="appearance" aria-label="Hugo-Ansicht">
+                <option value="future">Futuristisch</option>
+                <option value="board">Wandtafel</option>
+              </select></label
+            ><button
+              id="quick-new-chat"
+              class="icon-button"
+              aria-label="Neues Gespräch"
+              title="Neues Gespräch"
+            >
+              <svg><use href="#i-plus" /></svg></button
+            ><button
+              class="icon-button"
+              id="hugo-settings-trigger"
+              popovertarget="hugo-settings"
+              aria-label="Hugo-Einstellungen"
+              title="Hugo-Einstellungen"
+            >
+              <svg><use href="#i-settings" /></svg>
+            </button>
+          </div>
+        </header>
+
+        <div
+          id="notice"
+          class="notice"
+          role="alert"
+          aria-atomic="true"
+          hidden
+        ></div>
+        <section
+          id="voice-presence"
+          class="voice-presence"
+          data-mode="idle"
+          aria-label="Hugos Aktivität"
+        >
+          <div class="holo-objects" aria-hidden="true">
+            <div class="holo-object holo-cube">
+              <svg viewBox="0 0 120 120">
+                <path
+                  d="m60 8 43 25v50l-43 25-43-25V33Zm0 0v50m43-25L60 58 17 33m43 25v50M17 83l43-25 43 25"
+                />
+                <circle cx="60" cy="58" r="5" /></svg
+              ><span class="holo-satellite"></span>
+            </div>
+            <div class="holo-object holo-prism">
+              <svg viewBox="0 0 120 120">
+                <path
+                  d="m60 10 48 85H12Zm0 0v68m48 17L60 78 12 95m48-17L60 10"
+                />
+                <circle cx="60" cy="78" r="4" /></svg
+              ><span class="holo-satellite"></span>
+            </div>
+            <div class="signal-orbit signal-left"></div>
+            <div class="signal-orbit signal-right"></div>
+            <span class="field-particle particle-a"></span
+            ><span class="field-particle particle-b"></span
+            ><span class="field-particle particle-c"></span
+            ><span class="field-particle particle-d"></span
+            ><span class="field-particle particle-e"></span
+            ><span class="field-particle particle-f"></span>
+          </div>
+          <div class="orb-scene" aria-hidden="true">
+            <span class="orb-halo"></span>
+            <div class="orbit-plane plane-one">
+              <div class="orbit-track"></div>
+            </div>
+            <div class="orbit-plane plane-two">
+              <div class="orbit-track"></div>
+            </div>
+            <div class="orbit-plane plane-three">
+              <div class="orbit-track"></div>
+            </div>
+            <div class="hugo-avatar">
+              <span class="core-light"></span
+              ><svg class="core-mark" viewBox="0 0 100 100">
+                <path d="M35 27v46M65 27v46M35 50h30" /></svg
+              ><span class="voice-ring"></span
+              ><span class="sphere-shell shell-one"></span
+              ><span class="sphere-shell shell-two"></span
+              ><span class="sphere-shimmer"></span
+              ><span class="sphere-ripple ripple-one"></span
+              ><span class="sphere-ripple ripple-two"></span>
+            </div>
+            <span class="orb-spark spark-one"></span
+            ><span class="orb-spark spark-two"></span
+            ><span class="orb-spark spark-three"></span>
+          </div>
+          <div class="sponge-scene" aria-hidden="true">
+            <div class="sponge-shadow"></div>
+            <div class="sponge-character">
+              <div class="sponge-top"></div>
+              <div class="sponge-foam">
+                <span class="sponge-pore pore-one"></span
+                ><span class="sponge-pore pore-two"></span
+                ><span class="sponge-pore pore-three"></span>
+                <div class="sponge-face">
+                  <span class="sponge-eye eye-left"></span
+                  ><span class="sponge-eye eye-right"></span
+                  ><span class="sponge-cheek cheek-left"></span
+                  ><span class="sponge-cheek cheek-right"></span
+                  ><span class="sponge-mouth"></span>
+                </div>
+              </div>
+              <div class="sponge-felt"></div>
+            </div>
+            <span class="chalk-dust dust-one"></span
+            ><span class="chalk-dust dust-two"></span
+            ><span class="chalk-dust dust-three"></span
+            ><span class="chalk-dust dust-four"></span>
+          </div>
+          <div class="voice-presence-copy">
+            <strong>Hugo</strong
+            ><span
+              id="voice-presence-label"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              >Dein Assistent ist bereit.</span
+            >
+          </div>
+          <div class="speech-wave" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span
+            ><span></span><span></span><span></span><span></span>
+          </div>
+        </section>
+        <div class="workspace">
+          <section class="conversation" aria-label="Gespräch">
+            <div id="welcome" class="welcome">
+              <h1>Was möchtest du heute wissen?</h1>
+            </div>
+            <button
+              id="hugo-listen-preview"
+              class="listen-preview"
+              type="button"
+            >
+              <svg><use href="#i-speaker" /></svg>Hugo anhören
+            </button>
+            <div
+              id="messages"
+              class="messages"
+              role="log"
+              aria-live="polite"
+              aria-relevant="additions"
+            ></div>
+            <div id="working" class="working" role="status" hidden>
+              <span class="working-dot"></span
+              ><span>Dateien lesen und Claude fragen …</span
+              ><button id="cancel">Abbrechen</button>
+            </div>
+          </section>
+          <aside
+            id="source-panel"
+            class="source-panel"
+            aria-label="Gelesene Dokumente"
+            hidden
+          >
+            <h2>Gelesene Dokumente</h2>
+            <p id="coverage" class="muted"></p>
+            <p class="source-hint">
+              Die Ziffern in der Antwort verweisen auf diese Quellen. Anklicken
+              öffnet die Planungsquelle oder lädt die Originaldatei herunter.
+            </p>
+            <ul id="sources"></ul>
+            <details id="limits">
+              <summary>Grenzen dieser Suche</summary>
+              <ul id="warnings"></ul>
+            </details>
+          </aside>
+        </div>
+        <footer class="composer-area">
+          <div class="voice-bar">
+            <div class="mic-state">
+              <span id="mic-dot" class="dot off"></span
+              ><span id="mic-label">Mikrofon aus</span>
+            </div>
+            <button id="stop-speech" class="subtle-button" hidden>
+              Vorlesen stoppen</button
+            ><span id="wake-hint">Aktivierungswort: «Hey Hugo»</span>
+          </div>
+          <div class="conversation-settings">
+            <label for="chat-mode"
+              >Gespräch
+              <select id="chat-mode">
+                <option value="chat">Chat – ohne Dateien</option>
+                <option value="planning">
+                  Wochenplanung · KlassenFLOW &amp; LearningView
+                </option>
+                <option value="documents">Unterlagen einbeziehen</option>
+              </select></label
+            >
+          </div>
+          <form id="chat-form" class="composer">
+            <label class="sr-only" for="prompt">Dein Auftrag an Hugo</label
+            ><textarea
+              id="prompt"
+              rows="2"
+              maxlength="8000"
+              placeholder="Schreib Hugo eine Nachricht …"
+            ></textarea>
+            <div class="composer-controls">
+              <button
+                type="button"
+                id="mic"
+                class="mic-button"
+                aria-pressed="false"
+                aria-label="Aktivierungswort einschalten"
+              >
+                <svg><use href="#i-mic" /></svg></button
+              ><span id="composer-help"
+                >Enter zum Senden · Umschalt + Enter für eine neue Zeile</span
+              ><button
+                type="submit"
+                id="send"
+                class="send-button"
+                aria-label="Auftrag senden"
+              >
+                <svg><use href="#i-arrow" /></svg>
+              </button>
+            </div>
+          </form>
+          <p class="footer-note">
+            Nur freigegebene Ordner · Auszüge werden für deinen Auftrag an
+            Claude gesendet · Antworten mit Quellen prüfen
+          </p>
+        </footer>
+      </main>
+      <aside
+        id="widgets"
+        class="widgets"
+        aria-label="Frei platzierbare Widgets"
+      >
+        <p id="widget-move-help" class="sr-only">
+          Zum Verschieben ziehen oder Pfeiltasten verwenden. Umschalt für kleine
+          Schritte, Escape zum Abbrechen.
+        </p>
+        <p id="widget-position-status" class="sr-only" role="status"></p>
+        <section
+          class="widget floating-widget"
+          data-widget="clock"
+          aria-labelledby="clock-title"
+        >
+          <header class="widget-header">
+            <button
+              type="button"
+              class="widget-drag"
+              aria-label="Uhr verschieben"
+              aria-describedby="widget-move-help"
+              title="Ziehen oder mit Pfeiltasten verschieben"
+            >
+              <svg><use href="#i-drag" /></svg>
+            </button>
+            <h2 id="clock-title">Uhr</h2>
+            <button
+              type="button"
+              class="widget-gear icon-button"
+              popovertarget="clock-settings"
+              aria-label="Uhr: Einstellungen"
+              title="Einstellungen"
+            >
+              <svg><use href="#i-settings" /></svg>
+            </button>
+          </header>
+          <div class="widget-body">
+            <section
+              class="hugo-time"
+              aria-label="Aktuelle Uhrzeit und Datum in der Schweiz"
+            >
+              <div class="clock-orbit" aria-hidden="true">
+                <svg viewBox="0 0 64 64">
+                  <circle cx="32" cy="32" r="27" />
+                  <path d="M32 5v5M59 32h-5M32 59v-5M5 32h5" />
+                  <circle class="clock-satellite" cx="32" cy="5" r="2" />
+                </svg>
+              </div>
+              <div class="digital-clock">
+                <time id="digital-time" aria-live="off"
+                  ><span id="clock-hours">--</span
+                  ><span class="clock-colon" aria-hidden="true">:</span
+                  ><span id="clock-minutes">--</span
+                  ><span class="clock-colon" aria-hidden="true">:</span
+                  ><span id="clock-seconds" class="clock-seconds"
+                    >--</span
+                  ></time
+                >
+                <p id="digital-date">Datum wird geladen …</p>
+              </div>
+            </section>
+          </div>
+          <section
+            class="widget-settings"
+            id="clock-settings"
+            popover="auto"
+            aria-label="Uhr: Einstellungen"
+          >
+            <header>
+              <h2>Uhr – Einstellungen</h2>
+              <button
+                type="button"
+                class="icon-button"
+                popovertarget="clock-settings"
+                popovertargetaction="hide"
+                aria-label="Einstellungen schliessen"
+              >
+                <svg><use href="#i-close" /></svg>
+              </button>
+            </header>
+            <p>
+              Aktuelle Schweizer Zeit · Europe/Zurich. Die Uhr läuft auch bei
+              pausierten Animationen weiter.
+            </p>
+            <div class="position-settings">
+              <h3>Position</h3>
+              <p>
+                Am Griff ziehen oder den Griff mit der Tastatur fokussieren und
+                Pfeiltasten drücken. Kleine Schritte mit Umschalt.
+              </p>
+              <div class="position-buttons">
+                <button type="button" data-place="top-left">Oben links</button
+                ><button type="button" data-place="top-right">
+                  Oben rechts</button
+                ><button type="button" data-place="bottom-left">
+                  Unten links</button
+                ><button type="button" data-place="bottom-right">
+                  Unten rechts
+                </button>
+              </div>
+              <button class="text-button" type="button" data-reset-widget>
+                Position zurücksetzen
+              </button>
+            </div>
+          </section>
+        </section>
+        <section
+          class="widget floating-widget"
+          data-widget="planning"
+          aria-labelledby="planning-title"
+        >
+          <header class="widget-header">
+            <button
+              type="button"
+              class="widget-drag"
+              aria-label="Unterricht verschieben"
+              aria-describedby="widget-move-help"
+              title="Ziehen oder mit Pfeiltasten verschieben"
+            >
+              <svg><use href="#i-drag" /></svg>
+            </button>
+            <h2 id="planning-title">Unterricht</h2>
+            <button
+              type="button"
+              class="widget-gear icon-button"
+              popovertarget="planning-settings"
+              aria-label="Unterricht: Einstellungen"
+              title="Einstellungen"
+            >
+              <svg><use href="#i-settings" /></svg>
+            </button>
+          </header>
+          <div class="widget-body">
+            <p id="planning-week-label" class="compact-week">Laufende Woche</p>
+            <p id="planning-summary" class="compact-summary">
+              Quellen werden geprüft …
+            </p>
+            <button id="summarise-week" class="light-button">
+              Woche zusammenfassen
+            </button>
+          </div>
+          <section
+            class="widget-settings"
+            id="planning-settings"
+            popover="auto"
+            aria-label="Unterricht: Einstellungen"
+          >
+            <header>
+              <h2>Unterricht – Einstellungen</h2>
+              <button
+                type="button"
+                class="icon-button"
+                popovertarget="planning-settings"
+                popovertargetaction="hide"
+                aria-label="Einstellungen schliessen"
+              >
+                <svg><use href="#i-close" /></svg>
+              </button>
+            </header>
+            <div id="planning-connections"></div>
+            <div>
+              <p>
+                Hugo liest übernommene Browser-Auszüge. Nur die sichtbare Woche
+                und die sichtbaren Kursmaterialien werden erfasst. Vor jeder
+                Zusammenfassung aktualisieren.
+              </p>
+              <details>
+                <summary>Automatisch mit Chrome übernehmen</summary>
+                <p>
+                  Die lokale Hugo-Erweiterung liest ausschliesslich KlassenFLOW
+                  und LearningView. Installation im Ordner
+                  <strong>browser-bridge</strong>: Chrome → Erweiterungen →
+                  Entwicklermodus → Entpackte Erweiterung laden. Anmeldung
+                  bleibt in Chrome.
+                </p>
+                <button id="pair-browser" class="light-button" type="button">
+                  Verbindungscode anzeigen</button
+                ><label id="pair-label" hidden
+                  >Lokaler Verbindungscode<input
+                    id="browser-key"
+                    type="text"
+                    readonly
+                    autocomplete="off"
+                /></label>
+                <p>
+                  Code in die Erweiterung einfügen. Automatische Übernahme dort
+                  optional aktivieren; sie erfasst die geöffneten
+                  Unterrichtsansichten auch in Hintergrund-Tabs, keine
+                  eingeklappten Inhalte.
+                </p>
+              </details>
+              <form id="planning-import">
+                <label
+                  >Quelle<select id="planning-source">
+                    <option value="klassenflow">KlassenFLOW</option>
+                    <option value="learningview">LearningView</option>
+                  </select></label
+                ><label
+                  >Wochenbeginn (Montag)<input
+                    type="date"
+                    id="planning-week"
+                    required /></label
+                ><label
+                  >Planungsauszug<textarea
+                    id="planning-text"
+                    rows="5"
+                    maxlength="65000"
+                    placeholder="Sichtbare Unterrichtsplanung hier einfügen …"
+                    required
+                  ></textarea></label
+                ><button class="light-button">Auszug übernehmen</button>
+              </form>
+            </div>
+            <div class="position-settings">
+              <h3>Position</h3>
+              <p>
+                Am Griff ziehen oder den Griff mit der Tastatur fokussieren und
+                Pfeiltasten drücken. Kleine Schritte mit Umschalt.
+              </p>
+              <div class="position-buttons">
+                <button type="button" data-place="top-left">Oben links</button
+                ><button type="button" data-place="top-right">
+                  Oben rechts</button
+                ><button type="button" data-place="bottom-left">
+                  Unten links</button
+                ><button type="button" data-place="bottom-right">
+                  Unten rechts
+                </button>
+              </div>
+              <button class="text-button" type="button" data-reset-widget>
+                Position zurücksetzen
+              </button>
+            </div>
+          </section>
+        </section>
+        <section
+          class="widget floating-widget"
+          data-widget="calendar"
+          data-calendar-theme="hugo"
+          aria-labelledby="calendar-title"
+        >
+          <header class="widget-header">
+            <button
+              type="button"
+              class="widget-drag"
+              aria-label="Nächste Termine verschieben"
+              aria-describedby="widget-move-help"
+              title="Ziehen oder mit Pfeiltasten verschieben"
+            >
+              <svg><use href="#i-drag" /></svg>
+            </button>
+            <h2 id="calendar-title">Nächste Termine</h2>
+            <button
+              type="button"
+              class="widget-gear icon-button"
+              popovertarget="calendar-settings"
+              aria-label="Nächste Termine: Einstellungen"
+              title="Einstellungen"
+            >
+              <svg><use href="#i-settings" /></svg>
+            </button>
+          </header>
+          <div class="widget-body">
+            <p
+              id="calendar-empty"
+              class="compact-summary"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              Termine werden geladen …
+            </p>
+            <button
+              id="calendar-retry"
+              class="light-button"
+              type="button"
+              hidden
+            >
+              Erneut versuchen
+            </button>
+            <div class="calendar-view">
+              <iframe
+                id="calendar-frame"
+                title="Dein Google Kalender"
+                hidden
+                loading="lazy"
+                referrerpolicy="no-referrer"
+              ></iframe>
+            </div>
+            <ul
+              id="calendar-events"
+              class="widget-list"
+              aria-label="Termine in den nächsten 7 Tagen"
+            ></ul>
+          </div>
+          <section
+            class="widget-settings"
+            id="calendar-settings"
+            popover="auto"
+            aria-label="Nächste Termine: Einstellungen"
+          >
+            <header>
+              <h2>Nächste Termine – Einstellungen</h2>
+              <button
+                type="button"
+                class="icon-button"
+                popovertarget="calendar-settings"
+                popovertargetaction="hide"
+                aria-label="Einstellungen schliessen"
+              >
+                <svg><use href="#i-close" /></svg>
+              </button>
+            </header>
+            <label class="calendar-embed-choice"
+              ><input id="calendar-embed-toggle" type="checkbox" />
+              Google Kalender im Widget anzeigen</label
+            >
+            <label for="calendar-theme"
+              >Farben der Google-Ansicht<select id="calendar-theme">
+                <option value="hugo">Hugo · Dunkel und Türkis</option>
+                <option value="original">Google · Originalfarben</option>
+              </select></label
+            >
+            <p id="calendar-status">Kalender noch nicht eingerichtet.</p>
+            <button
+              id="calendar-reload"
+              class="light-button"
+              type="button"
+              hidden
+            >
+              Kalender neu laden
+            </button>
+            <div>
+              <p>
+                Dein Google Kalender wird direkt im Widget angezeigt und von Google
+                geladen. Es ist kein Dateiimport nötig. Dein privater Kalender
+                bleibt privat. Melde dich im verwendeten Browser bei Google an.
+                Falls Google die Einbettung blockiert, öffne den Kalender direkt
+                oder importiere eine Kalenderdatei.
+              </p>
+              <a
+                href="https://calendar.google.com/"
+                target="_blank"
+                rel="noopener"
+                >Google Kalender öffnen ↗</a
+              >
+              <form id="calendar-form">
+                <label
+                  >Google Kalender-ID<input
+                    id="calendar-id"
+                    type="text"
+                    placeholder="Deine Google-Mailadresse oder Kalender-ID"
+                    required /></label
+                ><button class="light-button">Kalender anzeigen</button
+                ><button class="text-button" type="button" id="calendar-remove">
+                  Einbettung entfernen
+                </button>
+              </form>
+              <label
+                >Alternativ: Kalenderdatei (.ics)<input
+                  type="file"
+                  id="calendar-file"
+                  accept=".ics,text/calendar"
+              /></label>
+              <p>
+                Die Terminliste zeigt den heutigen Tag und die sechs folgenden
+                Tage aus der Datei. Ein Dateiimport aktualisiert sich nicht
+                automatisch.
+              </p>
+            </div>
+            <div class="position-settings">
+              <h3>Position</h3>
+              <p>
+                Am Griff ziehen oder den Griff mit der Tastatur fokussieren und
+                Pfeiltasten drücken. Kleine Schritte mit Umschalt.
+              </p>
+              <div class="position-buttons">
+                <button type="button" data-place="top-left">Oben links</button
+                ><button type="button" data-place="top-right">
+                  Oben rechts</button
+                ><button type="button" data-place="bottom-left">
+                  Unten links</button
+                ><button type="button" data-place="bottom-right">
+                  Unten rechts
+                </button>
+              </div>
+              <button class="text-button" type="button" data-reset-widget>
+                Position zurücksetzen
+              </button>
+            </div>
+          </section>
+        </section>
+        <section
+          class="widget floating-widget"
+          data-widget="weather"
+          aria-labelledby="weather-title"
+        >
+          <header class="widget-header">
+            <button
+              type="button"
+              class="widget-drag"
+              aria-label="Wetter verschieben"
+              aria-describedby="widget-move-help"
+              title="Ziehen oder mit Pfeiltasten verschieben"
+            >
+              <svg><use href="#i-drag" /></svg>
+            </button>
+            <h2 id="weather-title">Wetter</h2>
+            <button
+              type="button"
+              class="widget-gear icon-button"
+              popovertarget="weather-settings"
+              aria-label="Wetter: Einstellungen"
+              title="Einstellungen"
+            >
+              <svg><use href="#i-settings" /></svg>
+            </button>
+          </header>
+          <div class="widget-body">
+            <p id="weather-place" class="weather-location-label">
+              Standort noch offen
+            </p>
+            <div id="weather-content"></div>
+            <button
+              id="weather-setup"
+              class="light-button"
+              type="button"
+              popovertarget="weather-settings"
+            >
+              Standort festlegen</button
+            ><a
+              class="attribution"
+              href="https://open-meteo.com/"
+              target="_blank"
+              rel="noopener"
+              >Open-Meteo ↗</a
+            >
+          </div>
+          <section
+            class="widget-settings"
+            id="weather-settings"
+            popover="auto"
+            aria-label="Wetter: Einstellungen"
+          >
+            <header>
+              <h2>Wetter – Einstellungen</h2>
+              <button
+                type="button"
+                class="icon-button"
+                popovertarget="weather-settings"
+                popovertargetaction="hide"
+                aria-label="Einstellungen schliessen"
+              >
+                <svg><use href="#i-close" /></svg>
+              </button>
+            </header>
+            <button id="weather-location" class="light-button">
+              Standort verwenden
+            </button>
+            <p>
+              Standort wird auf etwa 1 km gerundet an Open-Meteo gesendet und
+              nicht gespeichert.
+            </p>
+            <details>
+              <summary>Ort manuell wählen</summary>
+              <form id="weather-form">
+                <label
+                  >Ort<input
+                    id="weather-city"
+                    placeholder="z. B. Suhr, Schweiz"
+                    required /></label
+                ><button class="light-button">Wetter laden</button>
+              </form>
+            </details>
+            <div id="weather-details"></div>
+            <div class="position-settings">
+              <h3>Position</h3>
+              <p>
+                Am Griff ziehen oder den Griff mit der Tastatur fokussieren und
+                Pfeiltasten drücken. Kleine Schritte mit Umschalt.
+              </p>
+              <div class="position-buttons">
+                <button type="button" data-place="top-left">Oben links</button
+                ><button type="button" data-place="top-right">
+                  Oben rechts</button
+                ><button type="button" data-place="bottom-left">
+                  Unten links</button
+                ><button type="button" data-place="bottom-right">
+                  Unten rechts
+                </button>
+              </div>
+              <button class="text-button" type="button" data-reset-widget>
+                Position zurücksetzen
+              </button>
+            </div>
+          </section>
+        </section>
+      </aside>
+      <section
+        id="hugo-settings"
+        class="widget-settings global-settings"
+        popover="auto"
+        aria-label="Hugo-Einstellungen"
+      >
+        <header>
+          <h2>Hugo einrichten</h2>
+          <button
+            class="icon-button"
+            popovertarget="hugo-settings"
+            popovertargetaction="hide"
+            aria-label="Einstellungen schliessen"
+          >
+            <svg><use href="#i-close" /></svg>
+          </button>
+        </header>
+        <div class="settings-actions">
+          <button
+            id="sidebar-toggle"
+            type="button"
+            aria-controls="sidebar"
+            aria-expanded="true"
+          >
+            Ordner &amp; Claude-Verbindung</button
+          ><button id="fullscreen" type="button">Vollbild</button
+          ><button id="widgets-toggle" type="button" aria-expanded="true">
+            Widgets ein-/ausblenden</button
+          ><button id="motion-toggle" type="button" aria-pressed="false">
+            Animationen pausieren</button
+          ><button id="reset-widget-layout" type="button">
+            Widget-Positionen zurücksetzen</button
+          ><label class="speech-toggle"
+            ><span>Antwort vorlesen</span
+            ><input
+              id="speak"
+              type="checkbox"
+              aria-label="Antwort vorlesen"
+              checked
+          /></label>
+        </div>
+        <details class="voice-settings">
+          <summary>Stimme auswählen</summary>
+          <div class="voice-options">
+            <label for="voice-select">Hugos Stimme</label
+            ><select id="voice-select">
+              <option value="">Automatisch (Deutsch)</option></select
+            ><button type="button" id="voice-preview">Stimme anhören</button>
+            <p id="voice-help">
+              Verwendet die Stimmen deines Browsers und Macs. Kein zusätzlicher
+              KI-Dienst nötig.
+            </p>
+          </div>
+        </details>
+        <details class="setup-details">
+          <summary>Einrichtung &amp; erste Schritte</summary>
+          <div class="setup" aria-label="Erste Schritte">
+            <div>
+              <span id="setup-auth" class="step-state">1</span
+              ><span>Mit deinem Claude-Abo verbinden</span>
+            </div>
+            <div>
+              <span id="setup-folders" class="step-state">2</span
+              ><span
+                >Für Dokumentfragen: Unterrichtsordner auswählen
+                (optional)</span
+              >
+            </div>
+            <div>
+              <span class="step-state">3</span
+              ><span>Eine Frage stellen oder «Hey Hugo» sagen</span>
+            </div>
+          </div>
+        </details>
+        <details class="voice-info">
+          <summary>Hinweise zu Sprache und Hintergrundbetrieb</summary>
+          <p>
+            Nach dem Einschalten hört Chrome auf «Hey Hugo». Sage deinen Auftrag
+            direkt danach oder nach einer kurzen Pause. Die Spracherkennung kann
+            Audio an Googles Erkennungsdienst senden. Die Sprachausgabe hängt
+            von den installierten Stimmen ab. Andere Tabs sind möglich, solange
+            Chrome diese Seite aktiv hält und dein Mac wach ist. Unterbrechungen
+            werden angezeigt; gesperrte oder schlafende Geräte werden nicht
+            unterstützt. Text funktioniert auch ohne Mikrofon.
+          </p>
+        </details>
+        <p>
+          Widget-Einstellungen öffnen sich über das Zahnrad am jeweiligen
+          Widget. Positionen bleiben in diesem Browser gespeichert.
+        </p>
+      </section>
+    </div>
+  </body>
+</html>

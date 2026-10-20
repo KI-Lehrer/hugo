@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Hugo – Unterricht verbinden",
+  "version": "0.2.0",
+  "description": "Liest auf deinen Wunsch sichtbare Unterrichtsplanungen aus KlassenFLOW und LearningView und übergibt sie an deinen lokalen Hugo.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "alarms"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:4317/*",
+    "https://app.klassenflow.com/*",
+    "https://learningview.org/app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://app.klassenflow.com/*",
+        "https://learningview.org/app/*"
+      ],
+      "js": [
+        "capture.js"
+      ]
+    }
+  ]
+}
