@@ -35,7 +35,7 @@ Unter **Stimme auswählen** eine Browser-/Systemstimme wählen und mit **Stimme 
 
 ## Speicherung und Zugriff
 
-Nur auf `127.0.0.1` erreichbar. Schutz durch Host-/Origin-Prüfung, zufälliges Sitzungstoken und SameSite-Cookie. Keine externen Fonts oder UI-Abhängigkeiten. Ordnerfreigaben liegen lokal in `.jarvis/folders.json`; Dokumentauszüge aus Finder-Ordnern werden nicht gespeichert. Übernommene Browser-Planungsauszüge, Widget-Einstellungen und optional importierte Kalenderdateien liegen in `.jarvis/`. Ein lokaler Verbindungsschlüssel schützt die Browser-Übernahme. Der Chat liegt nur im Browser-Arbeitsspeicher und verschwindet beim Neuladen. Claude-Verarbeitung erfolgt entsprechend deinem Claude-Konto. Claude Code kann eigene Betriebs-/Anmeldedaten verwalten.
+Standardmässig nur auf `127.0.0.1` erreichbar; die unten beschriebene Codespaces-Konfiguration lässt zusätzlich die exakte eigene GitHub-Adresse zu. Schutz durch Host-/Origin-Prüfung, zufälliges Sitzungstoken und SameSite-Cookie. Keine externen Fonts oder UI-Abhängigkeiten. Ordnerfreigaben liegen lokal in `.jarvis/folders.json`; Dokumentauszüge aus Finder-Ordnern werden nicht gespeichert. Übernommene Browser-Planungsauszüge, Widget-Einstellungen und optional importierte Kalenderdateien liegen in `.jarvis/`. Ein lokaler Verbindungsschlüssel schützt die Browser-Übernahme. Der Chat liegt nur im Browser-Arbeitsspeicher und verschwindet beim Neuladen. Claude-Verarbeitung erfolgt entsprechend deinem Claude-Konto. Claude Code kann eigene Betriebs-/Anmeldedaten verwalten.
 
 Die erste Version ist für eine Person auf diesem Mac gedacht. Kein öffentliches Hosting und keine Mehrbenutzerfreigabe.
 
@@ -52,7 +52,7 @@ Die Oberfläche nutzt das gesamte Browserfenster. **Vollbild** blendet auf Wunsc
 
 Für spätere Übernahmen liegt die lokale Chrome-Erweiterung im Ordner **browser-bridge** bereit. Installation und Zugriff müssen ausdrücklich freigegeben werden; sie ist nicht automatisch installiert. Anleitung: [browser-bridge/README.md](browser-bridge/README.md). Sie liest die sichtbare Wochen-/Materialansicht der beiden Dienste und übergibt sie mit einem zufälligen lokalen Verbindungscode an Hugo. Keine Passwörter, Cookies, individuellen Schüler-Arbeitsstände oder Hintergrund-Navigation. Ein tieferliegendes, nicht geöffnetes Thema wird nicht automatisch gelesen. Optionaler Auto-Sync prüft etwa alle 90 Sekunden die geöffneten Unterrichtsseiten, auch im Hintergrund. Pro Dienst wird die zuletzt verwendete Ansicht übernommen; pausierte Tabs müssen einmal geöffnet werden. Zur vollständigen Trennung auch Auto-Sync deaktivieren bzw. die Erweiterung entfernen.
 
-**Google Kalender:** Das Widget zeigt eine eigene Liste für heute und die sechs folgenden Tage in Europe/Zurich. Die Daten kommen aus einer im Kalender-Zahnrad importierten .ics-Datei, inklusive Serien und Ausnahmen. Ohne Import zeigt Hugo einen Einrichtungshinweis; eine leere importierte Liste wird als «Keine Termine in den nächsten 7 Tagen» gekennzeichnet. Dateiimporte aktualisieren sich nicht automatisch. Die private Google-Einbettung ist separat im Zahnrad einschaltbar; eine Browser-Anmeldung liefert der eigenen Liste keine Daten. Kalenderfreigaben und Zugangsdaten werden nicht verändert.
+**Google Kalender:** Einmalig über die Kalender-ID verbinden. Die Google-Agenda erscheint direkt im Widget, ohne wiederholten ICS-Import. Bei privaten Kalendern ist die Anmeldung bei Google im verwendeten Browser erforderlich. Alternativ kann die eigene Sieben-Tage-Liste aus einem lokalen ICS-Import genutzt werden; diese importierte Datei synchronisiert sich nicht automatisch.
 
 **Wetter am aktuellen Standort:** Erst «Standort verwenden» fordert die Browserfreigabe an. Koordinaten werden vor der Abfrage auf zwei Nachkommastellen gerundet (ungefähr 1 km) und an Open-Meteo gesendet. Standortkoordinaten werden nicht gespeichert; nach einem Neuladen muss der Standort erneut angefordert werden. Alternativ kann ein Ort gespeichert werden. Der Wetterstand ist eine Modellprognose, kein eigener Wettersensor. Keine zusätzlichen API-Kosten; Open-Meteo ist für nichtkommerzielle Verwendung kostenlos.
 
@@ -94,3 +94,17 @@ Ein per Standortfreigabe gewählter Wetterort wird gerundet auf zwei Nachkommast
 ## GitHub und Erreichbarkeit
 
 Dieses Repository enthält den Quellcode. `.jarvis`, lokale Anmeldedaten, Unterrichtsunterlagen und Ausgabe-Dateien gehören nicht ins Repository. GitHub Pages kann den benötigten Node-Helfer und den lokalen Claude-Zugang nicht ausführen. Die lokale Adresse lautet `http://127.0.0.1:4317/`. Fernzugriff erfordert einen zusätzlich eingerichteten geschützten Zugang; das Repository allein stellt keinen öffentlich erreichbaren Dienst bereit.
+
+## Auf anderen Geräten über GitHub Codespaces
+
+[Hugo in GitHub Codespaces starten](https://codespaces.new/KI-Lehrer/hugo?quickstart=1)
+
+Die Konfiguration für einen eigenen GitHub Codespace liegt in `.devcontainer`. Sie installiert Node, Python/PDF-Unterstützung und Claude Code und startet Hugo auf Port 4317. Der Port muss **Privat** bleiben: GitHub verlangt vor dem Zugriff die Anmeldung mit dem Konto, dem der Codespace gehört. Den Port niemals öffentlich schalten; Hugo besitzt keine zusätzliche Benutzerverwaltung. Die exakte Codespaces-Adresse wird aus den GitHub-Umgebungsvariablen zugelassen, keine beliebigen Hosts oder Origins.
+
+1. Codespace erstellen und Einrichtung abwarten. GitHub zeigt Kontingent und gegebenenfalls Kosten; Codespaces ist kein kostenlos garantierter Dauer-Hostingdienst. Bei Inaktivität stoppt die Umgebung.
+2. Im Codespace-Terminal einmal `claude auth login` ausführen und mit dem Claude-Abo anmelden. Keine Zugangsdaten ins Repository kopieren.
+3. Unter **Ports → 4317 → Im Browser öffnen** die persönliche Hugo-Adresse öffnen. Diese HTTPS-Adresse kann auch auf anderen Geräten nach GitHub-Anmeldung verwendet werden.
+
+Die endgültige App-Adresse gibt es erst nach Erstellung des Codespace. Sie ist nicht die Repository-Adresse und keine GitHub-Pages-Adresse. Die Cloud-Einrichtung ist vorbereitet, aber noch nicht live geprüft. Das aktuelle GitHub-CLI-Login erlaubt Repository-Uploads, jedoch noch keinen Codespaces-Zugriff.
+
+Die Cloud-Umgebung hat **keinen Zugriff auf Finder-Ordner, die lokale Browser-Erweiterung oder Mac-Stimmen**. Unterrichtsdateien müssten gezielt in den privaten Codespace übertragen werden; lokale Planungsauszüge werden nicht automatisch übertragen. DOC/RTF-Konvertierung über macOS-textutil steht dort nicht zur Verfügung, PDF/DOCX/Text sind vorgesehen. Die Sprachausgabe nutzt verfügbare Browserstimmen. Für die automatische lokale KlassenFLOW-Übernahme weiterhin die lokale App verwenden.

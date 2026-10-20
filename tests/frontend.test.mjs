@@ -1,20 +1,20 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import vm from 'node:vm';
-import fs from 'node:fs/promises';
+import test from "node:test";
+import assert from "node:assert/strict";
+import vm from "node:vm";
+import fs from "node:fs/promises";
 
 const geometry = (
   await fs.readFile(
-    new URL('../public/widget-layout.js', import.meta.url),
-    'utf8',
+    new URL("../public/widget-layout.js", import.meta.url),
+    "utf8",
   )
-).replace(/^export /gm, '');
+).replace(/^export /gm, "");
 const app = await fs.readFile(
-  new URL('../public/widgets.js', import.meta.url),
-  'utf8',
+  new URL("../public/widgets.js", import.meta.url),
+  "utf8",
 );
 
-test('authenticated requests wait for the session token, including early UI requests', async (t) => {
+test("authenticated requests wait for the session token, including early UI requests", async (t) => {
   const calls = [];
   const originalFetch = globalThis.fetch;
   t.after(() => {
@@ -23,27 +23,27 @@ test('authenticated requests wait for the session token, including early UI requ
   let resolveSession;
   globalThis.fetch = async (route, options) => {
     calls.push({ route, options });
-    if (route === '/api/session')
+    if (route === "/api/session")
       return new Promise((resolve) => {
         resolveSession = resolve;
       });
     return { ok: true, json: async () => ({ ok: true }) };
   };
-  const { api, startSession } = await import('../public/api.js?session-test');
-  const pending = api('/api/status');
+  const { api, startSession } = await import("../public/api.js?session-test");
+  const pending = api("/api/status");
   await Promise.resolve();
-  assert.equal(calls.length, 0, 'no unauthenticated request may escape');
+  assert.equal(calls.length, 0, "no unauthenticated request may escape");
   const starting = startSession();
   assert.equal(calls.length, 1);
-  assert.equal(calls[0].route, '/api/session');
-  resolveSession({ ok: true, json: async () => ({ token: 'session-ready' }) });
+  assert.equal(calls[0].route, "/api/session");
+  resolveSession({ ok: true, json: async () => ({ token: "session-ready" }) });
   await starting;
   await pending;
   assert.equal(calls.length, 2);
-  assert.equal(calls[1].options.headers['X-Hugo-Token'], 'session-ready');
+  assert.equal(calls[1].options.headers["X-Hugo-Token"], "session-ready");
 });
 
-test('floating widgets avoid the central content and each other, even with identical saved positions', () => {
+test("floating widgets avoid the central content and each other, even with identical saved positions", () => {
   const context = vm.createContext({});
   vm.runInContext(geometry, context);
   const result = vm.runInContext(
@@ -76,12 +76,12 @@ test('floating widgets avoid the central content and each other, even with ident
   }
 });
 
-test('insufficient floating space returns no placement so UI can use the normal grid', () => {
+test("insufficient floating space returns no placement so UI can use the normal grid", () => {
   const context = vm.createContext({});
   vm.runInContext(geometry, context);
   assert.equal(
     vm.runInContext(
-      'HugoWidgetLayout.resolve({width:282,height:300},{x:0,y:0},{width:500,height:200})',
+      "HugoWidgetLayout.resolve({width:282,height:300},{x:0,y:0},{width:500,height:200})",
       context,
     ),
     null,
@@ -89,19 +89,19 @@ test('insufficient floating space returns no placement so UI can use the normal 
 });
 
 const calendarLoader = app.slice(
-  app.indexOf('async function loadCalendar()'),
+  app.indexOf("async function loadCalendar()"),
   app.indexOf("$('#calendar-retry').onclick"),
 );
-function calendarHarness(response, googleUrl = '') {
+function calendarHarness(response, googleUrl = "") {
   class Node {
     constructor() {
-      this.textContent = '';
+      this.textContent = "";
       this.hidden = false;
       this.children = [];
       this.attributes = {};
     }
     set innerHTML(value) {
-      throw new Error('HTML injection is forbidden');
+      throw new Error("HTML injection is forbidden");
     }
     setAttribute(key, value) {
       this.attributes[key] = value;
@@ -115,23 +115,29 @@ function calendarHarness(response, googleUrl = '') {
   }
   const nodes = Object.fromEntries(
     [
-      'calendar-empty',
-      'calendar-events',
-      'calendar-retry',
-      'calendar-status',
-    ].map((id) => ['#' + id, new Node()]),
+      "calendar-empty",
+      "calendar-events",
+      "calendar-retry",
+      "calendar-status",
+    ].map((id) => ["#" + id, new Node()]),
   );
   const context = vm.createContext({
     $: (id) => nodes[id],
     api: () => response(),
     document: { createElement: () => new Node() },
-    stamp: () => '20.10.26',
+    stamp: () => "20.10.26",
     resizeWidgets() {},
   });
-  vm.runInContext('let calendarRequest=0; let showCalendarEmbed=true; let calendarFrameUrl=' + JSON.stringify(googleUrl) + ';' + calendarLoader, context);
-  return { nodes, load: () => vm.runInContext('loadCalendar()', context) };
+  vm.runInContext(
+    "let calendarRequest=0; let showCalendarEmbed=true; let calendarFrameUrl=" +
+      JSON.stringify(googleUrl) +
+      ";" +
+      calendarLoader,
+    context,
+  );
+  return { nodes, load: () => vm.runInContext("loadCalendar()", context) };
 }
-test('calendar loading, failure, retry and empty states stay distinguishable', async () => {
+test("calendar loading, failure, retry and empty states stay distinguishable", async () => {
   let rejectRequest;
   let response = () =>
     new Promise((resolve, reject) => {
@@ -140,49 +146,51 @@ test('calendar loading, failure, retry and empty states stay distinguishable', a
   const h = calendarHarness(() => response());
   const loading = h.load();
   assert.equal(
-    h.nodes['#calendar-empty'].textContent,
-    'Termine werden geladen …',
+    h.nodes["#calendar-empty"].textContent,
+    "Termine werden geladen …",
   );
-  assert.equal(h.nodes['#calendar-events'].attributes['aria-busy'], 'true');
-  rejectRequest(new Error('offline'));
+  assert.equal(h.nodes["#calendar-events"].attributes["aria-busy"], "true");
+  rejectRequest(new Error("offline"));
   await loading;
-  assert.equal(h.nodes['#calendar-retry'].hidden, false);
-  assert.match(h.nodes['#calendar-empty'].textContent, /nicht geladen/);
+  assert.equal(h.nodes["#calendar-retry"].hidden, false);
+  assert.match(h.nodes["#calendar-empty"].textContent, /nicht geladen/);
   response = async () => ({
     configured: true,
     events: [],
     warnings: [],
-    importedAt: 'now',
+    importedAt: "now",
   });
   await h.load();
   assert.equal(
-    h.nodes['#calendar-empty'].textContent,
-    'Keine Termine in den nächsten 7 Tagen',
+    h.nodes["#calendar-empty"].textContent,
+    "Keine Termine in den nächsten 7 Tagen",
   );
-  assert.equal(h.nodes['#calendar-retry'].hidden, true);
-  assert.equal(h.nodes['#calendar-events'].attributes['aria-busy'], 'false');
+  assert.equal(h.nodes["#calendar-retry"].hidden, true);
+  assert.equal(h.nodes["#calendar-events"].attributes["aria-busy"], "false");
   response = async () => ({ configured: false, events: [], warnings: [] });
   await h.load();
-  assert.match(h.nodes['#calendar-empty'].textContent, /importieren/);
+  assert.match(h.nodes["#calendar-empty"].textContent, /importieren/);
 });
-test('calendar titles are literal text and never parsed as HTML', async () => {
-  const title = '<img src=x onerror=alert(1)>';
+test("calendar titles are literal text and never parsed as HTML", async () => {
+  const title = "<img src=x onerror=alert(1)>";
   const h = calendarHarness(async () => ({
     configured: true,
-    importedAt: 'now',
+    importedAt: "now",
     warnings: [],
-    events: [{ date: '2026-10-20', time: '10:00', allDay: false, title }],
+    events: [{ date: "2026-10-20", time: "10:00", allDay: false, title }],
   }));
   await h.load();
-  const item = h.nodes['#calendar-events'].children[0];
+  const item = h.nodes["#calendar-events"].children[0];
   assert.equal(item.children[1].textContent, title);
   assert.match(item.children[0].textContent, /10:00/);
 });
 
-test('connected Google calendar displays without requesting an ICS import', async () => {
-  const h = calendarHarness(() => { throw new Error('ICS must not be requested'); }, 'https://calendar.google.com/calendar/embed?src=example');
+test("connected Google calendar displays without requesting an ICS import", async () => {
+  const h = calendarHarness(() => {
+    throw new Error("ICS must not be requested");
+  }, "https://calendar.google.com/calendar/embed?src=example");
   await h.load();
-  assert.equal(h.nodes['#calendar-empty'].hidden, true);
-  assert.equal(h.nodes['#calendar-events'].hidden, true);
-  assert.match(h.nodes['#calendar-status'].textContent, /kein Dateiimport/);
+  assert.equal(h.nodes["#calendar-empty"].hidden, true);
+  assert.equal(h.nodes["#calendar-events"].hidden, true);
+  assert.match(h.nodes["#calendar-status"].textContent, /kein Dateiimport/);
 });

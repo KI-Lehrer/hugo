@@ -1,0 +1,12 @@
+{
+  "name": "Hugo",
+  "build": { "dockerfile": "Dockerfile" },
+  "remoteUser": "node",
+  "forwardPorts": [4317],
+  "portsAttributes": {
+    "4317": { "label": "Hugo", "onAutoForward": "notify", "protocol": "http" }
+  },
+  "remoteEnv": { "JARVIS_PYTHON": "/home/node/.local/hugo-python/bin/python" },
+  "postCreateCommand": "npm ci",
+  "postStartCommand": "bash .devcontainer/start.sh"
+}

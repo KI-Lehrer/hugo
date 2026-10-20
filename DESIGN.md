@@ -109,9 +109,9 @@ In Futuristisch, during actual audio playback the centre sculpture becomes a lum
 
 ### Calendar and optional Google embed
 
-The widget shows Hugo's own event list from /api/calendar. Its only event source is the local ICS import. The visible range is today in Swiss time through the following six days. Provide explicit loading, unconfigured, empty and error states; the error state offers retry. Explain the local import requirement without promising Google OAuth synchronisation. Preserve the saved Google calendar URL.
+The widget shows Hugo's own event list from /api/calendar. The optional native list uses the local ICS import; the default connected Google agenda renders directly in the widget. The visible range is today in Swiss time through the following six days. Provide explicit loading, unconfigured, empty and error states; the error state offers retry. Explain the optional local import without promising Google OAuth synchronisation. Preserve the saved Google calendar URL.
 
-An optional Google iframe appears only inside calendar settings after enabling its checkbox; persist that choice under hugo.calendarEmbed. The Futuristisch embed has a dark blue frame, muted cyan outline and colour filter. Originalfarben restores the remote rendering and persists locally; forced-colour mode disables the filter. This filter guidance applies only to the optional remote iframe. Hugo's native event list adapts its text and metadata to the active theme's palette.
+The saved Google iframe appears directly on the calendar widget by default, without requiring an ICS import. The settings checkbox switches between Google and the optional imported event list; persist the choice under hugo.calendarDisplay. The Futuristisch embed has a dark blue frame, muted cyan outline and colour filter. Originalfarben restores the remote rendering and persists locally; forced-colour mode disables the filter. This filter guidance applies only to the optional remote iframe. Hugo's native event list adapts its text and metadata to the active theme's palette.
 
 ### Accessible feedback and controls
 

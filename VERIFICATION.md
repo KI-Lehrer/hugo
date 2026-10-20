@@ -150,3 +150,5 @@ Design detector flags luminous accents and the previous design system palette: l
 ## Kalender- und Standortkorrektur, 20.10.2026
 
 Google-Einbettung zurück im Widget; verbundene Google-Ansicht benötigt keinen ICS-Import. Optionale Dateiliste bleibt erhalten. Automatisch ermittelte Wetterkoordinaten werden validiert, auf zwei Nachkommastellen gerundet und im lokalen Integrationsspeicher gesichert. Neustart des Speichers und Ersatz durch Stadtnamen getestet. Insgesamt 25 Tests bestanden. GitHub-Veröffentlichung enthält keine lokalen Laufzeitdaten. Fernzugriff ist ein separater Einrichtungsschritt.
+
+GitHub-Codespaces-Konfiguration ergänzt: exakte eigene Host-/Origin-Freigabe und sichere Sitzungscookies in Codespaces; fremde Hosts und Origins im Integrationstest abgewiesen. Container-Build und Cloud-Anmeldung noch nicht ausgeführt. Port muss privat bleiben und wird von GitHub authentifiziert. Kein öffentlicher ungeschützter Betrieb vorgesehen.
